@@ -165,11 +165,11 @@ contract UNASPresale is ReentrancyGuard, Context, Ownable {
         uint256 amount,
         address referral
     ) internal {
-        uint256 paid = getTotalPaid(referral);
         address ref = referral;
         if (address(referral) == address(0)) {
             ref = _user_reff[sender];
         }
+        uint256 paid = getTotalPaid(ref);
 
         if (sender != ref && paid >= refMinBuy) {
             _reffs[ref].unclaimed += amount.mul(refPct).div(uint256(1000));
@@ -272,6 +272,13 @@ contract UNASPresale is ReentrancyGuard, Context, Ownable {
     function updateStep(uint256 _step) external onlyOwner {
         require(_step > 0);
         step = _step;
+    }
+
+    function updateRefPrms(uint256 _pct, uint256 _minBuy) external onlyOwner {
+        require(_pct > 0);
+        require(_minBuy> 0);
+        refPct = _pct;
+        refMinBuy = _minBuy;
     }
 
     function stop() external onlyOwner {
